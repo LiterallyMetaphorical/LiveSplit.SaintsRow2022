@@ -4,6 +4,13 @@ state("SaintsRow_Vulkan")
     string100 objective : 0x05297388, 0x120, 0x168, 0x0; // UTF-16. Seems like ending offset 0x0 is consistent across all the good ones. 2nd last offset can be 168 or 498
 }
 
+state("SaintsRow_DX12") 
+{
+    double loading      : 0x0416F540, 0x158, 0x18, 0x3C0, 0x20, 0x168;
+    string100 objective : 0x052C05F8, 0x120, 0x168, 0x0;
+}
+
+
 // Objective 4Byte conversion list
 // MISSION OBJECTIVE          || 
 // Advance to your squad      || 6553665
