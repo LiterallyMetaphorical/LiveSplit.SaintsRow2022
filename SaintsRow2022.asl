@@ -81,15 +81,15 @@ startup
 init 
 {
     byte[] exeMD5HashBytes = new byte[0];
-	using (var md5 = System.Security.Cryptography.MD5.Create())
-	{
-		using (var s = File.Open(modules.First().FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-		{
-			exeMD5HashBytes = md5.ComputeHash(s); 
-		} 
-	}
-	var MD5Hash = exeMD5HashBytes.Select(x => x.ToString("X2")).Aggregate((a, b) => a + b);
-	//print("MD5Hash: " + MD5Hash.ToString());
+    using (var md5 = System.Security.Cryptography.MD5.Create())
+    {
+	    using (var s = File.Open(modules.First().FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+	    {
+	    	exeMD5HashBytes = md5.ComputeHash(s); 
+	    } 
+    }
+    var MD5Hash = exeMD5HashBytes.Select(x => x.ToString("X2")).Aggregate((a, b) => a + b);
+    //print("MD5Hash: " + MD5Hash.ToString());
 
     switch (MD5Hash) 
     {
@@ -159,5 +159,5 @@ isLoading
 
 exit
 {
-	timer.IsGameTimePaused = true;
+    timer.IsGameTimePaused = true;
 }
