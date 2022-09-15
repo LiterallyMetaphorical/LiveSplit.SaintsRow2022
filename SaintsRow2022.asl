@@ -5,48 +5,36 @@ state("SaintsRow_Vulkan", "1.1.4.4380107")
 {
     double loading      : 0x04145A20, 0x158, 0x18, 0x3C0, 0x20, 0x168; // double thats 1 on loading and 0 in game. All offsets consistent on updates. 
     string100 objective : 0x05297388, 0x120, 0x168, 0x0; // UTF-16. Seems like ending offset 0x0 is consistent across all the good ones. 2nd last offset can be 168 or 498
-    int missionEND      : 0x3D64044;
-    int finale          : 0x5757B58;
 }
 
 state("SaintsRow_DX12", "1.1.4.4380107") 
 {
     double loading      : 0x0416F540, 0x158, 0x18, 0x3C0, 0x20, 0x168;
     string100 objective : 0x052C05F8, 0x120, 0x168, 0x0;
-    int missionEND      : 0x3D8DB84;
-    int finale          : 0x57817E0;
 }
 
 state("SaintsRow_Vulkan", "1.1.2.4376604")
 {
     double loading      : 0x04145A88, 0x158, 0x18, 0x3C0, 0x20, 0x168;
     string100 objective : 0x05296778, 0x120, 0x168, 0x0;
-    int missionEND      : 0x3D63E54;
-    int finale          : 0x5757848;
 }
 
 state("SaintsRow_DX12", "1.1.2.4376604")
 {
     double loading      : 0x0416E5A8, 0x158, 0x18, 0x3C0, 0x20, 0x168;
     string100 objective : 0x052BFE28, 0x120, 0x168, 0x0;
-    int missionEND      : 0x3D8C994;
-    int finale          : 0x57804A0;
 }
 
 state("SaintsRow_Vulkan", "1.1.2.4374033")
 {
     double loading      : 0x04145948, 0x158, 0x18, 0x3C0, 0x20, 0x168;
     string100 objective : 0x05296638, 0x120, 0x168, 0x0;
-    int missionEND      : 0x3D63D14;
-    int finale          : 0x57576F0;
 }
 
 state("SaintsRow_DX12", "1.1.2.4374033")
 {
     double loading      : 0x0416CA80, 0x158, 0x18, 0x3C0, 0x20, 0x168;
     string100 objective : 0x052BFEA8, 0x120, 0x168, 0x0;
-    int missionEND      : 0x3D8CA14;
-	int finale          : 0x5780560;
 }
 
 
@@ -80,6 +68,23 @@ startup
 
 init 
 {
+    // Used for getting addresses from pattern scans
+	Func<int, string, int> getAddressFromPattern = (patternOffset, patternStr) => {
+		var page = modules.First();
+		var scanner = new SignatureScanner(game, page.BaseAddress, page.ModuleMemorySize);
+		IntPtr offsetPtr = scanner.Scan(new SigScanTarget(patternOffset, patternStr));
+		return (int) (offsetPtr.ToInt64() - page.BaseAddress.ToInt64() + game.ReadValue<int>(offsetPtr) + 0x4);
+	};
+
+    int finaleAddr = getAddressFromPattern(2, "88 1D ?? ?? ?? ?? 84 DB");
+    int missionENDAddr = getAddressFromPattern(4, "F3 0F 10 0D ?? ?? ?? ?? F3 0F 5C C8 F3 0F 59 CB F3 0F 58 C8 F3 0F 11 4C 24 ?? F3 0F 10 97 ?? ?? ?? ?? F3 0F 10 05 ?? ?? ?? ?? F3 0F 5C C2 F3 0F 59 C3 F3 0F 58 C2 F3 0F 11 44 24 ?? F3 0F 10 8F ?? ?? ?? ?? F3 0F 10 15 ?? ?? ?? ?? F3 0F 5C D1 F3 0F 59 D3 F3 0F 58 D1 F3 0F 11 54 24 ?? F3 0F 10 87 ?? ?? ?? ?? F3 0F 10 0D ?? ?? ?? ?? F3 0F 5C C8 F3 0F 59 CB F3 0F 58 C8 F3 0F 11 4C 24 ?? F3 0F 10 8F ?? ?? ?? ??");
+
+    vars.Watchers = new MemoryWatcherList
+    {
+        new MemoryWatcher<int>(new DeepPointer(finaleAddr)) { Name = "finale" },
+        new MemoryWatcher<int>(new DeepPointer(missionENDAddr)) { Name = "missionEND" }
+    };
+
     byte[] exeMD5HashBytes = new byte[0];
     using (var md5 = System.Security.Cryptography.MD5.Create())
     {
@@ -116,6 +121,7 @@ init
 update
 {
     vars.startAndReset = current.objective == "Advance to your squad" && old.objective.Contains("MISSION OBJECTIVE");
+    vars.Watchers.UpdateAll(game);
 }
 
 start
@@ -132,7 +138,7 @@ split
 {
     if (settings["MissionPassSplit"]) 
     {
-        if (old.missionEND != 0 && current.missionEND == 0) 
+        if (vars.Watchers["missionEND"].Old != 0 && vars.Watchers["missionEND"].Current == 0) 
         {
             return true;
         }
@@ -140,7 +146,7 @@ split
 
     if (settings["FinaleSplit"]) 
     {
-        if ((current.finale == 1 && old.finale == 257) && current.objective == "Kill the Nahualli") 
+        if ((vars.Watchers["finale"].Current == 1 && vars.Watchers["missionEND"].Old == 257) && current.objective == "Kill the Nahualli") 
         {
             return true;
         }
