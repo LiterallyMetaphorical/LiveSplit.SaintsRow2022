@@ -123,7 +123,7 @@ init
         case "3FEC1EBAC3DF5D358881817099F96096":
             version = "1.1.2.4374033";
             break;
-        case "67D480923A0F272E7092F123B5002EEA ": //DX12
+        case "67D480923A0F272E7092F123B5002EEA": //DX12
         case "010E2CC3A53F0483607E529E1A13C3EA": //Vulkan
             version = "1.1.6.4392638";
             break;
