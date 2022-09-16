@@ -1,5 +1,5 @@
 // Saints Row 2022 (DX12/Vulkan EXEs) Load Remover and Autosplitter 
-// Originally by Meta, with improvements added by hoxi, Vlad2D and xsoapbubble.
+// By Meta, hoxi, Vlad2D and xsoapbubble.
 
 state("SaintsRow_Vulkan", "1.1.4.4380107")
 {
@@ -36,6 +36,19 @@ state("SaintsRow_DX12", "1.1.2.4374033")
     double loading      : 0x0416CA80, 0x158, 0x18, 0x3C0, 0x20, 0x168;
     string100 objective : 0x052BFEA8, 0x120, 0x168, 0x0;
 }
+
+state("SaintsRow_Vulkan", "1.1.6.4392638")
+{
+    double loading      : 0x04146C70, 0x158, 0x18, 0x3C0, 0x20, 0x168;
+    string100 objective : 0x05297BA8, 0x120, 0x168, 0x0;
+}
+
+state("SaintsRow_DX12", "1.1.6.4392638")
+{
+    double loading      : 0x0416F800, 0x158, 0x18, 0x3C0, 0x20, 0x168;
+    string100 objective : 0x052C08C8, 0x120, 0x168, 0x0;
+}
+
 
 
 // Objective 4Byte conversion list
@@ -110,11 +123,14 @@ init
         case "3FEC1EBAC3DF5D358881817099F96096":
             version = "1.1.2.4374033";
             break;
+        case "67D480923A0F272E7092F123B5002EEA ": //DX12
+        case "010E2CC3A53F0483607E529E1A13C3EA": //Vulkan
+            version = "1.1.6.4392638";
+            break;
         default:
             version = "unknown";
             break;
     }
-
     vars.startAndReset = false;
 }
 
