@@ -49,6 +49,18 @@ state("SaintsRow_DX12", "1.1.6.4392638")
     string100 objective : 0x052C08C8, 0x120, 0x168, 0x0;
 }
 
+state("SaintsRow_DX12", "1.2.5.4537292")
+{
+    double loading      : 0x043CB250, 0x158, 0x18, 0x3C0, 0x20, 0x168; 
+    string100 objective : 0x0551AD38, 0x120, 0x168, 0x0;
+}
+
+state("SaintsRow_Vulkan", "1.2.5.4537292")
+{
+    double loading      : 0x043E35B8, 0x158, 0x18, 0x3C0, 0x20, 0x168;
+    string100 objective : 0x05531558, 0x120, 0x168, 0x0; 
+}
+
 
 
 // Objective 4Byte conversion list
@@ -126,6 +138,10 @@ init
         case "67D480923A0F272E7092F123B5002EEA": //DX12
         case "010E2CC3A53F0483607E529E1A13C3EA": //Vulkan
             version = "1.1.6.4392638";
+            break;
+        case "6AE5D5B75A3021D74B6FB278C890F4D5":
+        case "03A254E2D22ECACCF9908DB43A0A756E":
+            version = "1.2.5.4537292";
             break;
         default:
             version = "unknown";
